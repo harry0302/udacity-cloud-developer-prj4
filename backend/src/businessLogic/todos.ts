@@ -1,6 +1,6 @@
 import 'source-map-support/register'
-import { TodosAccess } from './todosAcess'
-import { AttachmentUtils } from './attachmentUtils';
+import { TodosAccess } from '../dataLayer/todosAcess'
+import { TodosStorage } from '../dataLayer/todosStorage.ts';
 import { TodoItem } from '../models/TodoItem'
 import { TodoUpdate } from '../models/TodoUpdate'
 import { CreateTodoRequest } from '../requests/CreateTodoRequest'
@@ -11,7 +11,7 @@ import * as uuid from 'uuid'
 const logger = createLogger('todos')
 
 const todosAccess = new TodosAccess()
-const attachmentUtils = new AttachmentUtils()
+const todosStorage = new TodosStorage()
 
 export async function getTodos(userId: string): Promise<TodoItem[]> {
   logger.info(`Retrieving all todos for user ${userId}`, { userId })
@@ -73,7 +73,7 @@ export async function deleteTodo(userId: string, todoId: string) {
 export async function updateAttachmentUrl(userId: string, todoId: string, attachmentId: string) {
   logger.info(`Generating attachment URL for attachment ${attachmentId}`)
 
-  const attachmentUrl = await attachmentUtils.getAttachmentUrl(attachmentId)
+  const attachmentUrl = await todosStorage.getAttachmentUrl(attachmentId)
 
   logger.info(`Updating todo ${todoId} with attachment URL ${attachmentUrl}`, { userId, todoId })
 
@@ -93,7 +93,7 @@ export async function updateAttachmentUrl(userId: string, todoId: string, attach
 export async function generateUploadUrl(attachmentId: string): Promise<string> {
   logger.info(`Generating upload URL for attachment ${attachmentId}`)
 
-  const uploadUrl = await attachmentUtils.getUploadUrl(attachmentId)
+  const uploadUrl = await todosStorage.getUploadUrl(attachmentId)
 
   return uploadUrl
 }
